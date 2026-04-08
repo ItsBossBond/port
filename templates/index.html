@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tharun | Full Stack Developer</title>
+<meta name="description" content="Python & Flask developer specializing in crypto tools, automation scripts, and full-stack web applications.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+    <div class="logo"><span class="logo-bracket">[</span>THARUN<span class="logo-dot">.</span>DEV<span class="logo-bracket">]</span></div>
+    <div class="nav-links desktop-only">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#services" class="nav-link">Services</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#contact" class="nav-link">Contact</a>
+        <a href="/login" class="btn-login">Admin Panel</a>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Open menu">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<div id="mobile-menu" class="mobile-menu">
+    <button class="close-btn" onclick="toggleMobileMenu()">✕</button>
+    <a href="#about" onclick="toggleMobileMenu()">About</a>
+    <a href="#services" onclick="toggleMobileMenu()">Services</a>
+    <a href="#projects" onclick="toggleMobileMenu()">Projects</a>
+    <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
+    <a href="/login" class="mobile-admin-link">→ Admin Login</a>
+</div>
+<div id="menu-overlay" class="menu-overlay" onclick="toggleMobileMenu()"></div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert {{ category }}" role="alert">
+                <span>{{ message }}</span>
+                <button onclick="this.parentElement.remove()" class="alert-close">✕</button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<header class="hero" id="home">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+        <div class="hero-tag">// Full Stack Developer &amp; Automation Expert</div>
+        <h1 class="hero-title">
+            Building <em>Digital</em><br>Systems That Work
+        </h1>
+        <p class="subtitle">
+            <span id="typewriter"></span><span class="cursor">|</span>
+        </p>
+        <div class="hero-cta-group">
+            <a href="#contact" class="cta-button primary">Hire Me &rarr;</a>
+            <a href="#projects" class="cta-button secondary">View Projects</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Projects Done</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span class="stat-num">3+</span><span class="stat-label">Years Exp.</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Client Satisfaction</span></div>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+    </div>
+</header>
+
+<section class="about-section" id="about">
+    <div class="container">
+        <div class="section-label">// About Me</div>
+        <h2 class="section-title">Tech <span class="accent">Stack</span></h2>
+        <div class="skills-grid">
+            <div class="skills-category">
+                <h4>Backend</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Flask</span>
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">SQLite</span>
+                    <span class="skill-tag">PostgreSQL</span>
+                </div>
+            </div>
+            <div class="skills-category">
+                <h4>Frontend</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">HTML5</span>
+                    <span class="skill-tag">CSS3</span>
+                    <span class="skill-tag">Three.js</span>
+                </div>
+            </div>
+            <div class="skills-category">
+                <h4>Crypto &amp; APIs</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">Binance API</span>
+                    <span class="skill-tag">Flash Scripts</span>
+                    <span class="skill-tag">Crypto Tools</span>
+                    <span class="skill-tag">Web3</span>
+                </div>
+            </div>
+            <div class="skills-category">
+                <h4>DevOps</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">Koyeb</span>
+                    <span class="skill-tag">Render</span>
+                    <span class="skill-tag">Docker</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="services" id="services">
+    <div class="container">
+        <div class="section-label">// What I Offer</div>
+        <h2 class="section-title">My <span class="accent">Services</span></h2>
+        <div class="cards-container">
+            {% for service in services %}
+            <div class="card reveal">
+                <div class="card-icon-wrap">{{ service.icon }}</div>
+                <h3>{{ service.title }}</h3>
+                <p>{{ service.desc }}</p>
+                <div class="card-arrow">&rarr;</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="estimator">
+    <div class="container">
+        <div class="section-label">// Tool</div>
+        <h2 class="section-title">Cost <span class="accent">Estimator</span></h2>
+        <div class="terminal-box">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="tdot red"></div>
+                    <div class="tdot yellow"></div>
+                    <div class="tdot green"></div>
+                </div>
+                <span class="terminal-title">$ estimation_tool.sh</span>
+            </div>
+            <div class="terminal-body">
+                <p class="t-prompt">&gt; Select components for your project:</p>
+                <div class="options">
+                    {% for opt in calc_options %}
+                    <label class="check-label">
+                        <input type="checkbox" onchange="calculateCost()" value="{{ opt.price_value }}">
+                        <span class="checkmark"></span>
+                        <span class="opt-name">{{ opt.label }}</span>
+                        <span class="opt-price">${{ opt.price_value }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <div class="result">
+                    <span class="t-prompt">&gt; TOTAL ESTIMATED COST:</span>
+                    <span id="totalCost" class="total-val">$0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pricing-section" id="pricing">
+    <div class="container">
+        <div class="section-label">// Packages</div>
+        <h2 class="section-title">Service <span class="accent">Packages</span></h2>
+        <div class="pricing-container">
+            {% for plan in plans %}
+            <div class="pricing-card {% if plan.is_popular %}popular{% endif %} reveal">
+                {% if plan.is_popular %}<div class="badge">&#9733; MOST POPULAR</div>{% endif %}
+                <div class="price-header">
+                    <p class="plan-label">{{ plan.title }}</p>
+                    <div class="price">{{ plan.price }}<span class="price-unit">{{ plan.unit }}</span></div>
+                </div>
+                <ul class="price-features">
+                    {% for feature in plan.features.split(',') %}
+                    <li><span class="feat-arrow">&rarr;</span> {{ feature.strip() }}</li>
+                    {% endfor %}
+                </ul>
+                <button onclick="selectPlan('{{ plan.title }}')" class="price-btn">{{ plan.btn_text }}</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="projects" id="projects">
+    <div class="container">
+        <div class="section-label">// Portfolio</div>
+        <h2 class="section-title">Deployed <span class="accent">Systems</span></h2>
+        <div class="projects-grid">
+            {% for project in projects %}
+            <div class="project-card reveal">
+                <div class="project-img">
+                    <img src="{{ project.img }}" alt="{{ project.title }}" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="view-label">View Project &rarr;</span>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <h3>{{ project.title }}</h3>
+                    <p class="project-tech">{{ project.tech }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="contact" id="contact">
+    <div class="container">
+        <div class="section-label">// Get In Touch</div>
+        <h2 class="section-title">Send a <span class="accent">Request</span></h2>
+        <div class="contact-wrapper">
+            <div class="contact-info">
+                <h3>Let's build something together</h3>
+                <p>Have a project in mind? Fill out the form and I'll get back to you within 24 hours.</p>
+                <div class="contact-methods">
+                    <a href="https://t.me/Username_Is_Tharun" target="_blank" rel="noopener" class="contact-method">
+                        <span class="method-icon">&#9992;</span>
+                        <div>
+                            <span class="method-label">Telegram</span>
+                            <span class="method-val">@Username_Is_Tharun</span>
+                        </div>
+                    </a>
+                    <div class="contact-method">
+                        <span class="method-icon">&#128231;</span>
+                        <div>
+                            <span class="method-label">Email</span>
+                            <span class="method-val">bcapro02@gmail.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form action="/send_message" method="POST" class="contact-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" placeholder="John Doe" required autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="contact">Email or Telegram</label>
+                    <input type="text" id="contact" name="contact" placeholder="@telegram or email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Project Details</label>
+                    <textarea id="message" name="message" placeholder="Describe your project, timeline, and budget..." rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <span>SEND REQUEST</span>
+                    <span class="btn-arrow">&rarr;</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container footer-inner">
+        <div class="footer-brand">
+            <div class="logo">[THARUN.DEV]</div>
+            <p>Building digital systems that work.</p>
+        </div>
+        <div class="footer-links">
+            <a href="#services">Services</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <a href="https://t.me/Username_Is_Tharun" class="telegram-btn" target="_blank" rel="noopener">
+            <span>&#9992;</span> Contact on Telegram
+        </a>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Tharun.Dev &mdash; All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

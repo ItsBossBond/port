@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Tharun.Dev</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-body">
+
+<nav class="navbar" style="position:fixed;top:0;left:0;width:100%;z-index:1000;">
+    <div class="logo"><span class="logo-bracket">[</span>ADMIN<span class="logo-dot">.</span>PANEL<span class="logo-bracket">]</span></div>
+    <div style="display:flex;align-items:center;gap:20px;">
+        <a href="/" style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);letter-spacing:1px;">← Portfolio</a>
+        <a href="/logout" style="font-family:var(--mono);font-size:0.7rem;color:#ff4444;border:1px solid rgba(255,68,68,0.3);padding:6px 14px;border-radius:4px;letter-spacing:1px;transition:all 0.2s;"
+           onmouseover="this.style.background='rgba(255,68,68,0.1)'" onmouseout="this.style.background='transparent'">Logout</a>
+    </div>
+</nav>
+
+<div class="admin-container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}" style="position:relative;top:auto;right:auto;margin-bottom:20px;animation:none;">
+                    <span>{{ message }}</span>
+                    <button onclick="this.parentElement.remove()" class="alert-close">✕</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- HEADER -->
+    <div style="margin-bottom:40px;">
+        <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:3px;color:var(--cyan);margin-bottom:8px;opacity:0.7;">// Dashboard</div>
+        <h1 style="font-size:2rem;font-weight:800;color:white;letter-spacing:-1px;">Admin <span style="color:var(--cyan);">Dashboard</span></h1>
+    </div>
+
+    <!-- VISITOR STATS -->
+    <div class="admin-section">
+        <h2>Visitor Analytics</h2>
+        <div class="stat-cards">
+            <div class="stat-card">
+                <span class="big">{{ stats.day }}</span>
+                <span class="lbl">Last 24 Hours</span>
+            </div>
+            <div class="stat-card">
+                <span class="big">{{ stats.week }}</span>
+                <span class="lbl">Last 7 Days</span>
+            </div>
+            <div class="stat-card">
+                <span class="big">{{ stats.month }}</span>
+                <span class="lbl">Last 30 Days</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLIENT MESSAGES -->
+    <div class="admin-section">
+        <h2>Client Messages
+            <span style="font-size:0.6rem;color:var(--cyan);margin-left:12px;background:var(--cyan-dim);padding:3px 10px;border-radius:10px;">
+                {{ messages | selectattr('replied', 'equalto', false) | list | length }} new
+            </span>
+        </h2>
+        {% if messages %}
+        <div class="table-wrapper">
+            <table class="neon-table">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Name</th>
+                        <th>Contact</th>
+                        <th>Message</th>
+                        <th>Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in messages %}
+                    <tr>
+                        <td>
+                            {% if msg.replied %}
+                                <span style="color:#22c55e;font-family:var(--mono);font-size:0.65rem;letter-spacing:1px;">REPLIED</span>
+                            {% else %}
+                                <span style="color:var(--cyan);font-family:var(--mono);font-size:0.65rem;letter-spacing:1px;background:var(--cyan-dim);padding:2px 8px;border-radius:8px;">NEW</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-weight:700;color:white;">{{ msg.name }}</td>
+                        <td style="font-family:var(--mono);font-size:0.75rem;">{{ msg.contact_info }}</td>
+                        <td style="max-width:300px;">
+                            <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px;color:var(--muted);font-size:0.82rem;" title="{{ msg.message }}">
+                                {{ msg.message }}
+                            </div>
+                        </td>
+                        <td style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);white-space:nowrap;">
+                            {{ msg.timestamp.strftime('%b %d, %H:%M') }}
+                        </td>
+                        <td>
+                            <form action="/admin/delete_msg/{{ msg.id }}" method="POST"
+                                  onsubmit="return confirm('Delete this message from {{ msg.name }}?');"
+                                  style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn-del-plan" title="Delete message">✕ Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p style="color:var(--muted);font-family:var(--mono);font-size:0.8rem;padding:20px 0;">No messages yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- MANAGE SERVICE PLANS -->
+    <div class="admin-section">
+        <h2>Service Plans</h2>
+        <div class="table-wrapper" style="margin-bottom:28px;">
+            <table class="neon-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Price</th>
+                        <th>Features</th>
+                        <th>Popular</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plan in plans %}
+                    <tr>
+                        <td style="font-weight:700;color:white;">{{ plan.title }}</td>
+                        <td style="color:var(--cyan);font-family:var(--mono);">{{ plan.price }}</td>
+                        <td style="font-size:0.75rem;color:var(--muted);max-width:200px;">{{ plan.features[:80] }}{% if plan.features|length > 80 %}...{% endif %}</td>
+                        <td>
+                            {% if plan.is_popular %}
+                                <span style="color:var(--violet);font-family:var(--mono);font-size:0.65rem;">★ YES</span>
+                            {% else %}
+                                <span style="color:var(--muted);font-family:var(--mono);font-size:0.65rem;">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="/admin/delete_plan/{{ plan.id }}" method="POST"
+                                  onsubmit="return confirm('Delete plan: {{ plan.title }}?');"
+                                  style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn-del-plan">✕ Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:2px;color:var(--muted);margin-bottom:16px;text-transform:uppercase;">Add New Plan</div>
+        <form action="/admin/add_plan" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-row">
+                <input name="title" placeholder="Plan Title (e.g. Enterprise Suite)" required
+                       style="flex:1;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:6px;font-family:var(--sans);font-size:0.85rem;outline:none;">
+                <input name="price" placeholder="Price (e.g. $500)" required
+                       style="width:160px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:6px;font-family:var(--sans);font-size:0.85rem;outline:none;">
+                <input name="unit" placeholder="Unit (e.g. /project)"
+                       style="width:160px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:6px;font-family:var(--sans);font-size:0.85rem;outline:none;">
+            </div>
+            <div class="form-row" style="align-items:center;">
+                <input name="features" placeholder="Features (comma separated, e.g. Bug Fixes,API Work,Deployment)" required
+                       style="flex:1;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:6px;font-family:var(--sans);font-size:0.85rem;outline:none;">
+                <input name="btn_text" placeholder="Button Text (e.g. GET STARTED)"
+                       style="width:200px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:6px;font-family:var(--sans);font-size:0.85rem;outline:none;">
+                <label style="color:var(--text);font-family:var(--mono);font-size:0.7rem;display:flex;align-items:center;gap:8px;white-space:nowrap;padding:10px 0;">
+                    <input type="checkbox" name="is_popular" style="accent-color:var(--violet);width:15px;height:15px;"> Mark Popular
+                </label>
+            </div>
+            <button type="submit" class="btn-add">+ ADD PLAN</button>
+        </form>
+    </div>
+
+    <!-- CALCULATOR PRICES -->
+    <div class="admin-section">
+        <h2>Calculator Option Prices</h2>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            {% for opt in calc_options %}
+            <form action="/admin/update_calc" method="POST"
+                  style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="opt_id" value="{{ opt.id }}">
+                <span style="flex:1;min-width:180px;color:var(--text);font-size:0.85rem;">{{ opt.label }}</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="color:var(--muted);font-family:var(--mono);font-size:0.8rem;">$</span>
+                    <input type="number" name="price_value" value="{{ opt.price_value }}" min="0"
+                           style="width:100px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--cyan);padding:8px 12px;border-radius:6px;font-family:var(--mono);font-size:0.9rem;font-weight:700;outline:none;text-align:center;">
+                </div>
+                <button type="submit"
+                        style="background:transparent;border:1px solid rgba(0,229,255,0.3);color:var(--cyan);padding:8px 18px;border-radius:4px;font-family:var(--mono);font-size:0.65rem;letter-spacing:1px;cursor:pointer;transition:all 0.2s;"
+                        onmouseover="this.style.background='var(--cyan-dim)'" onmouseout="this.style.background='transparent'">UPDATE</button>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.alert').forEach(a => {
+        setTimeout(() => { a.style.opacity='0'; a.style.transition='opacity 0.4s'; setTimeout(()=>a.remove(),400); }, 4000);
+    });
+});
+</script>
+</body>
+</html>
