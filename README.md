@@ -39,8 +39,8 @@ gunicorn app:app --bind 0.0.0.0:8000
 | Variable | Default | Description |
 |---|---|---|
 | `SECRET_KEY` | (hardcoded) | Flask secret key — **change in production!** |
-| `ADMIN_EMAIL` | bcapro02@gmail.com | Admin login username |
-| `ADMIN_PASSWORD` | passtosite@321 | Admin login password |
+| `ADMIN_EMAIL` | *********@gmail.com | Admin login username |
+| `ADMIN_PASSWORD` | ********** | Admin login password |
 
 ## Admin Panel
 Visit `/login` and use your admin credentials.
