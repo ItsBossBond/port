@@ -320,5 +320,11 @@ with app.app_context():
         db.session.add_all(seed_opts)
         db.session.commit()
 
+@app.route("/reset-db")
+def reset_db():
+    db.drop_all()
+    db.create_all()
+    return "Database reset successful"
+
 if __name__ == '__main__':
     app.run(debug=False)
